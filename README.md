@@ -76,6 +76,8 @@ On Windows PowerShell:
 
 ## Database ERD (Mermaid)
 
+Main ERD (optimized for readability):
+
 ```mermaid
 erDiagram
     USER {
@@ -200,13 +202,31 @@ erDiagram
     CATEGORY ||--o{ BUDGET : scopes
     CATEGORY ||--o{ RECURRING_TRANSACTION : classifies
 
-    %% Self-referencing
-    LOCATION ||--o{ LOCATION : parent_of
-    CATEGORY ||--o{ CATEGORY : parent_of
-
     %% Many-to-many via join table
     TRANSACTION ||--o{ TRANSACTION_TAG : mapped_by
     TAG ||--o{ TRANSACTION_TAG : mapped_by
+```
+
+Hierarchy ERD (self-referencing only):
+
+```mermaid
+erDiagram
+    LOCATION {
+        UUID location_id PK
+        UUID parent_id FK
+        string name
+        enum location_type
+    }
+
+    CATEGORY {
+        UUID category_id PK
+        UUID parent_category_id FK
+        string category_name
+        enum category_type
+    }
+
+    LOCATION ||--o{ LOCATION : parent_of
+    CATEGORY ||--o{ CATEGORY : parent_of
 ```
 
 ### Relationship Legend
@@ -215,7 +235,7 @@ erDiagram
 - One-to-many: `USER` to `ACCOUNT` (and similar)
 - Many-to-one: inverse of one-to-many, e.g., each `ACCOUNT` belongs to one `USER`
 - Many-to-many: `TRANSACTION` to `TAG` via `TRANSACTION_TAG`
-- Self-referencing: `LOCATION` to `LOCATION`, `CATEGORY` to `CATEGORY`
+- Self-referencing: shown in the dedicated Hierarchy ERD (`LOCATION` to `LOCATION`, `CATEGORY` to `CATEGORY`) to avoid clutter
 
 ## Included ERD Image Exports
 
